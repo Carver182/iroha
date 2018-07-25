@@ -123,6 +123,11 @@ namespace shared_model {
           });
     }
 
+    bool TransactionBatch::operator==(const TransactionBatch &rhs) const {
+      return reducedHash() == rhs.reducedHash()
+          and transactions() == rhs.transactions();
+    }
+
     types::HashType TransactionBatch::calculateReducedBatchHash(
         const boost::any_range<types::HashType, boost::forward_traversal_tag>
             &reduced_hashes) {

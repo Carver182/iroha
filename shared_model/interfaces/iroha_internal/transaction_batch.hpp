@@ -15,6 +15,7 @@ namespace shared_model {
 
     class TransactionBatch {
      public:
+      TransactionBatch() = delete;
 
       /**
        * Create transaction batch out of collection of transactions
@@ -67,6 +68,8 @@ namespace shared_model {
        * otherwise
        */
       bool hasAllSignatures() const;
+
+      bool operator==(const TransactionBatch &rhs) const;
 
       /**
        * Get the concatenation of reduced hashes as a single hash
