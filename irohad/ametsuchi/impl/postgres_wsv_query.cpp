@@ -17,7 +17,6 @@
 
 #include "ametsuchi/impl/postgres_wsv_query.hpp"
 
-#include <soci/boost-optional.h>
 #include <soci/boost-tuple.h>
 
 #include "ametsuchi/impl/soci_utils.hpp"
@@ -68,14 +67,6 @@ namespace iroha {
         soci::session &sql,
         std::shared_ptr<shared_model::interface::CommonObjectsFactory> factory)
         : sql_(sql), factory_(factory), log_(logger::log("PostgresWsvQuery")) {}
-
-    PostgresWsvQuery::PostgresWsvQuery(
-        std::unique_ptr<soci::session> sql_ptr,
-        std::shared_ptr<shared_model::interface::CommonObjectsFactory> factory)
-        : sql_ptr_(std::move(sql_ptr)),
-          sql_(*sql_ptr_),
-          factory_(factory),
-          log_(logger::log("PostgresWsvQuery")) {}
 
     bool PostgresWsvQuery::hasAccountGrantablePermission(
         const AccountIdType &permitee_account_id,

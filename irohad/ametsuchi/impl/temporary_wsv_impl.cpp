@@ -11,9 +11,9 @@
 
 namespace iroha {
   namespace ametsuchi {
-    TemporaryWsvImpl::TemporaryWsvImpl(std::unique_ptr<soci::session> sql,
-                                       std::shared_ptr<shared_model::interface::CommonObjectsFactory>
-                                       factory)
+    TemporaryWsvImpl::TemporaryWsvImpl(
+        std::unique_ptr<soci::session> sql,
+        std::shared_ptr<shared_model::interface::CommonObjectsFactory> factory)
         : sql_(std::move(sql)),
           wsv_(std::make_shared<PostgresWsvQuery>(*sql_, factory)),
           executor_(std::make_shared<PostgresWsvCommand>(*sql_)),
@@ -34,7 +34,7 @@ namespace iroha {
       auto execute_command =
           [this](auto &command) -> expected::Result<void, CommandError> {
         // Validate and execute command
-            return boost::apply_visitor(*command_executor_, command.get());
+        return boost::apply_visitor(*command_executor_, command.get());
       };
 
       auto savepoint_wrapper = createSavepoint("savepoint_temp_wsv");

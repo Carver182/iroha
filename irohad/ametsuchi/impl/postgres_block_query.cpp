@@ -17,14 +17,7 @@ namespace iroha {
                                            KeyValueStorage &file_store)
         : sql_(sql),
           block_store_(file_store),
-          log_(logger::log("PostgresBlockIndex")) {}
-
-    PostgresBlockQuery::PostgresBlockQuery(
-        std::unique_ptr<soci::session> sql_ptr, KeyValueStorage &file_store)
-        : sql_ptr_(std::move(sql_ptr)),
-          sql_(*sql_ptr_),
-          block_store_(file_store),
-          log_(logger::log("PostgresBlockIndex")) {}
+          log_(logger::log("PostgresBlockQuery")) {}
 
     rxcpp::observable<BlockQuery::wBlock> PostgresBlockQuery::getBlocks(
         shared_model::interface::types::HeightType height, uint32_t count) {

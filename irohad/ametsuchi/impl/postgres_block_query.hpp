@@ -12,7 +12,6 @@
 #include "ametsuchi/impl/flat_file/flat_file.hpp"
 #include "ametsuchi/impl/soci_utils.hpp"
 #include "logger/logger.hpp"
-#include "ametsuchi/impl/soci_utils.hpp"
 
 namespace iroha {
   namespace ametsuchi {
@@ -25,8 +24,6 @@ namespace iroha {
     class PostgresBlockQuery : public BlockQuery {
      public:
       explicit PostgresBlockQuery(soci::session &sql,
-                                  KeyValueStorage &file_store);
-      explicit PostgresBlockQuery(std::unique_ptr<soci::session> sql_ptr,
                                   KeyValueStorage &file_store);
 
       rxcpp::observable<wTransaction> getAccountTransactions(
