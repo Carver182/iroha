@@ -211,6 +211,13 @@ namespace iroha {
     class MockMutableStorage : public MutableStorage {
      public:
       MOCK_METHOD2(
+          check,
+          bool(const shared_model::interface::BlockVariant &,
+               std::function<
+                   bool(const shared_model::interface::BlockVariant &,
+                        WsvQuery &,
+                        const shared_model::interface::types::HashType &)>));
+      MOCK_METHOD2(
           apply,
           bool(const shared_model::interface::Block &,
                std::function<
@@ -266,6 +273,7 @@ namespace iroha {
       MOCK_METHOD1(insertBlocks,
                    bool(const std::vector<
                         std::shared_ptr<shared_model::interface::Block>> &));
+      MOCK_METHOD0(reset, void(void));
       MOCK_METHOD0(dropStorage, void(void));
 
       rxcpp::observable<std::shared_ptr<shared_model::interface::Block>>

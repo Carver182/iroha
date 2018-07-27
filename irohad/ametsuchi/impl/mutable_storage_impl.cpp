@@ -21,6 +21,7 @@
 
 #include "ametsuchi/impl/postgres_command_executor.hpp"
 #include "ametsuchi/impl/postgres_block_index.hpp"
+#include "ametsuchi/impl/postgres_command_executor.hpp"
 #include "ametsuchi/impl/postgres_wsv_command.hpp"
 #include "ametsuchi/impl/postgres_wsv_query.hpp"
 #include "ametsuchi/wsv_command.hpp"
@@ -46,9 +47,7 @@ namespace iroha {
 
     bool MutableStorageImpl::apply(
         const shared_model::interface::Block &block,
-        std::function<bool(const shared_model::interface::Block &,
-                           WsvQuery &,
-                           const shared_model::interface::types::HashType &)>
+        MutableStoragePredicateType<const shared_model::interface::Block &>
             function) {
       auto execute_transaction = [this](auto &transaction) {
         command_executor_->setCreatorAccountId(transaction.creatorAccountId());

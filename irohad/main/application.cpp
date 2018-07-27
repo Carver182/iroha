@@ -15,6 +15,7 @@
 #include "multi_sig_transactions/mst_time_provider_impl.hpp"
 #include "multi_sig_transactions/storage/mst_storage_impl.hpp"
 #include "multi_sig_transactions/transport/mst_transport_grpc.hpp"
+#include "torii/impl/status_bus_impl.hpp"
 #include "validators/field_validator.hpp"
 
 using namespace iroha;
@@ -66,7 +67,6 @@ void Irohad::init() {
   initWsvRestorer();
   restoreWsv();
 
-  initPeerQuery();
   initCryptoProvider();
   initValidators();
   initOrderingGate();
@@ -75,6 +75,7 @@ void Irohad::init() {
   initConsensusGate();
   initSynchronizer();
   initPeerCommunicationService();
+  initStatusBus();
   initMstProcessor();
 
   // Torii
@@ -86,7 +87,7 @@ void Irohad::init() {
  * Dropping iroha daemon storage
  */
 void Irohad::dropStorage() {
-  storage->dropStorage();
+  storage->reset();
   ordering_service_storage_->resetState();
 }
 
@@ -234,6 +235,11 @@ void Irohad::initPeerCommunicationService() {
   log_->info("[Init] => pcs");
 }
 
+void Irohad::initStatusBus() {
+  status_bus_ = std::make_shared<StatusBusImpl>();
+  log_->info("[Init] => Tx status bus");
+}
+
 void Irohad::initMstProcessor() {
   if (is_mst_supported_) {
     auto mst_transport = std::make_shared<MstTransportGrpc>();
@@ -258,8 +264,8 @@ void Irohad::initMstProcessor() {
  * Initializing transaction command service
  */
 void Irohad::initTransactionCommandService() {
-  auto tx_processor =
-      std::make_shared<TransactionProcessorImpl>(pcs, mst_processor);
+  auto tx_processor = std::make_shared<TransactionProcessorImpl>(
+      pcs, mst_processor, status_bus_);
 
   command_service = std::make_shared<::torii::CommandService>(
       tx_processor, storage, std::chrono::seconds(1), 2 * proposal_delay_);
