@@ -17,6 +17,7 @@
 
 #include "ametsuchi/impl/postgres_wsv_query.hpp"
 
+#include <soci/boost-optional.h>
 #include <soci/boost-tuple.h>
 
 #include "ametsuchi/impl/soci_utils.hpp"
@@ -132,6 +133,9 @@ namespace iroha {
       processSoci(st, ind, row, [&set](std::string &row) {
         set = shared_model::interface::RolePermissionSet(row);
       });
+      if (set.none()) {
+        return boost::none;
+      }
       return set;
     }
 

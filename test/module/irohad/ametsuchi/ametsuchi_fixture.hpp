@@ -35,12 +35,6 @@ namespace iroha {
       }
 
      protected:
-      virtual void clear() {
-        *sql << drop_;
-
-        iroha::remove_dir_contents(block_store_path);
-      }
-
       virtual void disconnect() {
         sql->close();
       }

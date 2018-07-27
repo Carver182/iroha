@@ -45,13 +45,20 @@ namespace iroha {
       *sql_ << "BEGIN";
     }
 
+    bool MutableStorageImpl::check(
+        const shared_model::interface::BlockVariant &block,
+        MutableStorage::MutableStoragePredicateType<decltype(block)>
+        predicate) {
+      return predicate(block, *wsv_, top_hash_);
+    }
+
     bool MutableStorageImpl::apply(
         const shared_model::interface::Block &block,
         MutableStoragePredicateType<const shared_model::interface::Block &>
             function) {
       auto execute_transaction = [this](auto &transaction) {
         command_executor_->setCreatorAccountId(transaction.creatorAccountId());
-        command_executor_->setIsGenesis(true);
+        command_executor_->doValidation(false);
         auto execute_command = [this](auto &command) {
           auto result = boost::apply_visitor(*command_executor_, command.get());
           return result.match([](expected::Value<void> &v) { return true; },

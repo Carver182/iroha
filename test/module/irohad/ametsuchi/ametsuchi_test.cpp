@@ -638,61 +638,6 @@ TEST_F(AmetsuchiTest, TestingStorageWhenCommitBlock) {
   ASSERT_TRUE(wrapper.validate());
 }
 
-TEST_F(AmetsuchiTest, TestingStorageWhenDropAll) {
-  auto logger = logger::testLog("TestStorage");
-  logger->info(
-      "Test case: create storage "
-      "=> insert block "
-      "=> assert that written"
-      " => drop all "
-      "=> assert that all deleted ");
-
-  auto log = logger::testLog("TestStorage");
-  log->info(
-      "Test case: create storage "
-      "=> insert block "
-      "=> assert that inserted");
-  std::shared_ptr<StorageImpl> storage;
-  auto storageResult = StorageImpl::create(block_store_path, pgopt_, factory);
-  storageResult.match(
-      [&](iroha::expected::Value<std::shared_ptr<StorageImpl>> &_storage) {
-        storage = _storage.value;
-      },
-      [](iroha::expected::Error<std::string> &error) {
-        FAIL() << "StorageImpl: " << error.error;
-      });
-  ASSERT_TRUE(storage);
-  auto wsv = storage->getWsvQuery();
-  ASSERT_EQ(0, wsv->getPeers().value().size());
-
-  log->info("Try insert block");
-
-  auto inserted = storage->insertBlock(getBlock());
-  ASSERT_TRUE(inserted);
-
-  log->info("Request ledger information");
-
-  ASSERT_NE(0, wsv->getPeers().value().size());
-
-  log->info("Drop ledger");
-
-  storage->dropStorage();
-
-  ASSERT_EQ(0, wsv->getPeers().value().size());
-  std::shared_ptr<StorageImpl> new_storage;
-  auto new_storage_result =
-      StorageImpl::create(block_store_path, pgopt_, factory);
-  new_storage_result.match(
-      [&](iroha::expected::Value<std::shared_ptr<StorageImpl>> &_storage) {
-        new_storage = _storage.value;
-      },
-      [](iroha::expected::Error<std::string> &error) {
-        FAIL() << "StorageImpl: " << error.error;
-      });
-  ASSERT_EQ(0, wsv->getPeers().value().size());
-  new_storage->dropStorage();
-}
-
 /**
  * @given initialized storage
  * @when insert block with 2 transactions in
